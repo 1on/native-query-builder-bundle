@@ -94,14 +94,16 @@ class JobQueueManager implements ConsumerInterface
         else
         {
             $periods = $this->getPeriods();
-            $routePeriod = $message['producer'] . '_producer.' . $message['route'] . '_route';
 
-            if (isset($periods[$message['periodCode']]))
+            if (isset($message['route']))
+                $routePeriod = $message['producer'] . '_producer.' . $message['route'] . '_route';
+            else
+                $routePeriod = $message['producer'] . '_producer';
+
+            if (isset($message['periodCode']) && isset($periods[$message['periodCode']]))
                 $interval = $periods[$message['periodCode']];
-            elseif (isset($message['route']) && isset($periods[$routePeriod]))
-                $interval = $periods[$message['producer'] . '_producer'];
-            elseif (isset($periods[$message['producer'] . '_producer']))
-                $interval = $periods[$message['producer'] . '_producer'];
+            elseif (isset($periods[$routePeriod]))
+                $interval = $periods[$routePeriod];
         }
 
         if (!$message['recurring'])

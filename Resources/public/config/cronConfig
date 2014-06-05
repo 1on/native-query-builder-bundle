@@ -1,0 +1,3 @@
+BASE_PATH=${HOME}/JobQueue/web/bundles/intarojobqueue/
+
+*/2 * * * * ${BASE_PATH}config/rabbitmqStarter.sh

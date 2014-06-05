@@ -44,17 +44,17 @@ class JobExecuteService implements ConsumerInterface
         return true;
     }
 
-    protected function setTimeout($timeout)
+    public function setTimeout($timeout)
     {
         $this->timeout = $timeout;
     }
 
-    protected function setEnvironment($environment)
+    public function setEnvironment($environment)
     {
         $this->environment = $environment;
     }
 
-    protected function setDurable($durable)
+    public function setDurable($durable)
     {
         $this->durable = $durable;
     }
