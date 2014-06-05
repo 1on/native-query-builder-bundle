@@ -1,0 +1,2 @@
+parameters:
+    intaro_job_queue.job_manager.class: 'Intaro\JobQueueBundle\JobQueue\JobQueueManager'
