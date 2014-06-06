@@ -22,7 +22,11 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('environment')->defaultValue('prod')->end()
                 ->booleanNode('durable')->defaultValue(true)->end()
                 ->arrayNode('intervals')
-                    ->useAttributeAsKey('code')
+                    ->useAttributeAsKey('name')
+                    ->prototype('array')
+                    ->children()
+                        ->scalarNode('value')->isRequired()->end()
+                    ->end()
             ->end();
 
         return $tree;

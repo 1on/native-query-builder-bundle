@@ -29,19 +29,25 @@ class IntaroJobQueueExtension extends Extension implements PrependExtensionInter
             ->addMethodCall('setDurable', array($config['durable']));
         $container->setDefinition('job_execute_service', $definition);
 
-        if (isset($config['intervals']))
+        if (!isset($config['intervals']))
             $config['intervals'] = array();
+        else
+        {
+            foreach ($config['intervals'] as $key => $value)
+                $config['intervals'][$key] = $value['value'];
+        }
 
         $definition = new Definition($config['class']);
         $definition->addArgument(new Reference('service_container'))
+            ->addArgument($config['intervals'])
             ->addTag('old_sound_rabbit_mq.base_amqp')
-            ->addTag('old_sound_rabbit_mq.consumer')
-            ->addMethodCall('setIntervals', array($config['intervals']));
+            ->addTag('old_sound_rabbit_mq.consumer');
         $container->setDefinition('job_queue_manager', $definition);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('config.yml');
     }
+
 
     public function prepend(ContainerBuilder $container)
     {

@@ -11,9 +11,10 @@ class JobQueueManager implements ConsumerInterface
     private $intervals = array();
 
 
-    public function __construct($container)
+    public function __construct($container, array $intervals)
     {
         $this->container = $container;
+        $this->setIntervals($intervals);
     }
 
 
@@ -150,7 +151,10 @@ class JobQueueManager implements ConsumerInterface
 
     protected function setIntervals(array $intervals)
     {
-        $this->intervals = $intervals;
+        $this->intervals = array();
+
+        foreach ($intervals as $interval)
+            $this->intervals[] = new \DateInterval('PT' . interval($interval) . 'S');
 
         return $this;
     }
