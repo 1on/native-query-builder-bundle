@@ -21,6 +21,8 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('job_timeout')->defaultValue(null)->end()
                 ->scalarNode('environment')->defaultValue('prod')->end()
                 ->booleanNode('durable')->defaultValue(true)->end()
+                ->arrayNode('intervals')
+                    ->useAttributeAsKey('code')
             ->end();
 
         return $tree;

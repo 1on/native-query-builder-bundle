@@ -7,7 +7,8 @@ class JobQueueManager implements ConsumerInterface
 {
     protected $container;
 
-    private $defaultPeriod = 'P1D';
+    private $defaultInterval = 'P1D';
+    private $intervals = array();
 
 
     public function __construct($container)
@@ -21,8 +22,8 @@ class JobQueueManager implements ConsumerInterface
      *  recurring - повторяющаяся задача
      *  startDate - время запуска задачи
      *  route - routing key для задачи
-     *  periodCode - код по которому ищется задержка между выполнениями задачи
-     *  period - задержка между выполнениями задачи
+     *  intervalCode - код по которому ищется задержка между выполнениями задачи
+     *  interval - задержка между выполнениями задачи
      */
     public function addJob($command, $producerName, array $parameters = array())
     {
@@ -38,10 +39,10 @@ class JobQueueManager implements ConsumerInterface
 
         if (isset($parameters['route']))
             $message['route'] = $parameters['route'];
-        if (isset($parameters['periodCode']))
-            $message['periodCode'] = $parameters['periodCode'];
-        if (isset($parameters['period']))
-            $message['period'] = 'PT' . $parameters['period'] . 'S';
+        if (isset($parameters['intervalCode']))
+            $message['intervalCode'] = $parameters['intervalCode'];
+        if (isset($parameters['interval']))
+            $message['interval'] = 'PT' . $parameters['interval'] . 'S';
 
         $this->sheduleJob($message);
     }
@@ -86,24 +87,24 @@ class JobQueueManager implements ConsumerInterface
     {
         $producer = $this->container->get('old_sound_rabbit_mq.job_shedule_producer');
 
-        $interval = new \DateInterval($this->defaultPeriod);
-        if (isset($message['period']))
+        $interval = new \DateInterval($this->defaultInterval);
+        if (isset($message['interval']))
         {
-            $interval = new \DateInterval($message['period']);
+            $interval = new \DateInterval($message['interval']);
         }
         else
         {
-            $periods = $this->getPeriods();
+            $intervals = $this->getIntervals();
 
             if (isset($message['route']))
-                $routePeriod = $message['producer'] . '_producer.' . $message['route'] . '_route';
+                $routeInterval = $message['producer'] . '_producer.' . $message['route'] . '_route';
             else
-                $routePeriod = $message['producer'] . '_producer';
+                $routeInterval = $message['producer'] . '_producer';
 
-            if (isset($message['periodCode']) && isset($periods[$message['periodCode']]))
-                $interval = $periods[$message['periodCode']];
-            elseif (isset($periods[$routePeriod]))
-                $interval = $periods[$routePeriod];
+            if (isset($message['intervalCode']) && isset($intervals[$message['intervalCode']]))
+                $interval = $intervals[$message['intervalCode']];
+            elseif (isset($intervals[$routeInterval]))
+                $interval = $intervals[$routeInterval];
         }
 
         if (!$message['recurring'])
@@ -142,8 +143,15 @@ class JobQueueManager implements ConsumerInterface
     }
 
 
-    protected function getPeriods()
+    protected function getIntervals()
     {
-        return array();
+        return $this->intervals;
+    }
+
+    protected function setIntervals(array $intervals)
+    {
+        $this->intervals = $intervals;
+
+        return $this;
     }
 }
