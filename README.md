@@ -78,10 +78,10 @@ Initiate cyclic update:
 ```php
     $jobManager = $container->get('job_queue_manager');
     $jobManager->addJob('acme:integration:main', 'integration_main',
-        array('recurring' => true, 'period' => 'P1D', 'startDate' => new \DateTime('00:00:00'))
+        array('recurring' => true, 'interval' => 'P1D', 'startDate' => new \DateTime('00:00:00'))
         );
     $jobManager->addJob('acme:integration:service', 'integration_service',
-        array('recurring' => true, 'periodCode' => 'integration_service')
+        array('recurring' => true, 'intervalCode' => 'integration_service')
         );
 ```
 
