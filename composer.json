@@ -3,6 +3,7 @@
     "description": "Job queue based on RabbitMq",
     "keywords": ["symfony2", "rabbitmq", "job-queue", "queue"],
     "type": "symfony-bundle",
+    "license": "MIT",
     "authors": [{
         "name": "Kruglov Kirill",
         "email": "kruglov@intaro.ru",
