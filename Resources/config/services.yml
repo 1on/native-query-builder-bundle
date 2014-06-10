@@ -1,0 +1,2 @@
+parameters:
+    doctrine.orm.entity_manager.class: 'Intaro\NativeQueryBuilderBundle\Builder\EntityManager'

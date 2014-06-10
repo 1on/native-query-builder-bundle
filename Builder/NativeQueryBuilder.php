@@ -5,7 +5,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
-class NativeQueryBuilder extends EntityRepository
+class NativeQueryBuilder
 {
     const CACHE_TIME = 600;
 
@@ -17,9 +17,9 @@ class NativeQueryBuilder extends EntityRepository
     private $limit = null;
     private $page = null;
     private $rest = '';
-
     private $queryParametes = array();
-    private $em;
+
+    protected $em;
 
     public function __construct(EntityManager $em)
     {
@@ -32,7 +32,7 @@ class NativeQueryBuilder extends EntityRepository
      * @param integer $cacheTime время кеширования запроса
      * @return NativeQuery
      */
-    public function getQuery(ResultSetMapping $rsm, $cacheTime = self::CACHE_TIME)
+    public function getQuery(ResultSetMapping $rsm, $resetParameters = true, $cacheTime = self::CACHE_TIME)
     {
         $query = $this->em->createNativeQuery('', $rsm);
 
@@ -88,7 +88,10 @@ class NativeQueryBuilder extends EntityRepository
         $query->setSql($sql);
         if ($cacheTime != 0)
             $query->useResultCache(true, $cacheTime);
-        $this->resetQuery();
+        $this->queryParametes = array();
+
+        if ($resetParameters)
+            $this->resetQuery();
 
         return $query;
     }
@@ -137,22 +140,31 @@ class NativeQueryBuilder extends EntityRepository
     }
 
 
-    protected function addSelect($select)
+    public function addSelect($select)
     {
         $this->select[] = $select;
+        return $this;
     }
 
-    protected function setFrom($from)
+    public function clearSelect()
+    {
+        $this->select = array();
+        return $this;
+    }
+
+    public function setFrom($from)
     {
         $this->from = $from;
+        return $this;
     }
 
-    protected function addJoin($table, $joinOn)
+    public function addJoin($table, $joinOn)
     {
         $this->join[$table] = $joinOn;
+        return $this;
     }
 
-    protected function addWhere($where, $parameter = null, $isOr = false)
+    public function addWhere($where, $parameter = null, $isOr = false)
     {
         if ($isOr)
         {
@@ -161,11 +173,31 @@ class NativeQueryBuilder extends EntityRepository
             $this->where['OR'][] = array($where, $parameter);
         }
         $this->where[] = array($where, $parameter);
+        return $this;
     }
 
-    protected function addOrderBy($field, $direction = 'DESC')
+    public function addOrderBy($field, $direction = 'DESC')
     {
         $this->orderBy[$field] = $direction;
+        return $this;
+    }
+
+    public function setRest($rest)
+    {
+        $this->rest = $rest;
+        return $this;
+    }
+
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
+        return $this;
+    }
+
+    public function setPage($page)
+    {
+        $this->page = $page;
+        return $this;
     }
 
 
@@ -178,7 +210,5 @@ class NativeQueryBuilder extends EntityRepository
         $this->limit = null;
         $this->page = null;
         $this->orderBy = array();
-
-        $this->queryParametes = array();
     }
 }
