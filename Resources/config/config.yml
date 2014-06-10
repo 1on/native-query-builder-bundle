@@ -1,2 +1,2 @@
 parameters:
-    intaro_job_queue.job_manager.class: 'Intaro\JobQueueBundle\JobQueue\JobQueueManager'
+    doctrine.orm.entity_manager.class:: 'Intaro/NativeQueryBuilderBundle/Builder/EntityManager'

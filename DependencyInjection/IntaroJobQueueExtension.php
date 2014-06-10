@@ -1,6 +1,6 @@
 <?php
 
-namespace Intaro\JobQueueBundle\DependencyInjection;
+namespace Intaro\NativeQueryBuilderBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -20,78 +20,7 @@ class IntaroJobQueueExtension extends Extension implements PrependExtensionInter
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $definition = new Definition('Intaro\JobQueueBundle\JobQueue\JobExecuteService');
-        $definition->addArgument($container->getParameter('kernel.root_dir'))
-            ->addTag('old_sound_rabbit_mq.base_amqp')
-            ->addTag('old_sound_rabbit_mq.consumer')
-            ->addMethodCall('setTimeout', array($config['job_timeout']))
-            ->addMethodCall('setEnvironment', array($config['environment']))
-            ->addMethodCall('setDurable', array($config['durable']));
-        $container->setDefinition('job_execute_service', $definition);
-
-        if (!isset($config['intervals']))
-            $config['intervals'] = array();
-        else
-        {
-            foreach ($config['intervals'] as $key => $value)
-                $config['intervals'][$key] = $value['value'];
-        }
-
-        $definition = new Definition($config['class']);
-        $definition->addArgument(new Reference('service_container'))
-            ->addArgument($config['intervals'])
-            ->addTag('old_sound_rabbit_mq.base_amqp')
-            ->addTag('old_sound_rabbit_mq.consumer');
-        $container->setDefinition('job_queue_manager', $definition);
-
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('config.yml');
-    }
-
-
-    public function prepend(ContainerBuilder $container)
-    {
-        $config = array(
-            'producers' => array(
-                'job_shedule' => array(
-                    'connection' => 'default',
-                    'exchange_options' => array('name' => 'job_queue', 'type' => 'direct'),
-                    'queue_options' => array(
-                        'name' => 'job_shedule',
-                        'arguments' => array(
-                            'x-dead-letter-exchange' => array('S', 'job_queue'),
-                            'x-dead-letter-routing-key' => array('S', 'job_queue')
-                            ),
-                        'routing_keys' => array('job_shedule')
-                        )
-                    )
-                ),
-            'consumers' => array(
-                'job_shedule' => array(
-                    'connection' => 'default',
-                    'exchange_options' => array('name' => 'job_queue', 'type' => 'direct'),
-                    'queue_options' => array(
-                        'name' => 'job_shedule',
-                        'arguments' => array(
-                            'x-dead-letter-exchange' => array('S', 'job_queue'),
-                            'x-dead-letter-routing-key' => array('S', 'job_queue')
-                            ),
-                        'routing_keys' => array('job_shedule')
-                        ),
-                    'callback' => 'job_queue_manager'
-                    ),
-                'job_queue' => array(
-                    'connection' => 'default',
-                    'exchange_options' => array('name' => 'job_queue', 'type' => 'direct'),
-                    'queue_options' => array(
-                        'name' => 'job_queue',
-                        'routing_keys' => array('job_queue')
-                        ),
-                    'callback' => 'job_queue_manager'
-                    )
-                )
-            );
-
-        $container->prependExtensionConfig('old_sound_rabbit_mq', $config);
     }
 }

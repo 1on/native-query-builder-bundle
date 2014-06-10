@@ -1,9 +1,9 @@
 <?php
 
-namespace Intaro\JobQueueBundle;
+namespace Intaro\NativeQueryBuilderBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class IntaroJobQueueBundle extends Bundle
+class IntaroNativeQueryBuilderBundle extends Bundle
 {
 }

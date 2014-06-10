@@ -1,6 +1,6 @@
 <?php
 
-namespace Intaro\JobQueueBundle\DependencyInjection;
+namespace Intaro\NativeQueryBuilderBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -13,22 +13,9 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $tree = new TreeBuilder();
+        $treeBuilder = new TreeBuilder();
+        $rootNode = $treeBuilder->root('intaro_native_query_builder');
 
-        $tree->root('intaro_job_queue')
-            ->children()
-                ->scalarNode('class')->defaultValue('%intaro_job_queue.job_manager.class%')->end()
-                ->scalarNode('job_timeout')->defaultValue(null)->end()
-                ->scalarNode('environment')->defaultValue('prod')->end()
-                ->booleanNode('durable')->defaultValue(true)->end()
-                ->arrayNode('intervals')
-                    ->useAttributeAsKey('name')
-                    ->prototype('array')
-                    ->children()
-                        ->scalarNode('value')->isRequired()->end()
-                    ->end()
-            ->end();
-
-        return $tree;
+        return $treeBuilder;
     }
 }
