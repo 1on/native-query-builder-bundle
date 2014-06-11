@@ -112,26 +112,24 @@ class NativeQueryBuilder
             return $result;
         }
 
-        $lastItem = end($conditions);
-        if (isset($conditions['OR']) && count($conditions['OR'] > 0))
-        {
-            $lastItem = end($conditions['OR']);
-            $result .= '(';
-            foreach ($conditions['OR'] as $condition)
-            {
-                $result .= '(' . $this->buildConditions($condition) . ')';
-                if ($condition != $lastItem)
-                    $result .= ' OR ';
-            }
-            $result .= ') ';
-        }
 
+        $lastItem = end($conditions);
         foreach ($conditions as $key => $condition)
         {
-            if ($key === 'OR')
-                continue;
-
-            $result .= $this->buildConditions($condition);
+            if ($key === 'OR' && count($condition > 0))
+            {
+                $orLastItem = end($condition);
+                $result .= '(';
+                foreach ($condition as $orCondition)
+                {
+                    $result .= '(' . $this->buildConditions($orCondition) . ')';
+                    if ($orCondition != $orLastItem)
+                        $result .= ' OR ';
+                }
+                $result .= ') ';
+            }
+            else
+                $result .= $this->buildConditions($condition);
             if ($condition != $lastItem)
                 $result .= ' AND ';
         }
@@ -172,7 +170,9 @@ class NativeQueryBuilder
                 $this->where['OR'] = array();
             $this->where['OR'][] = array($where, $parameter);
         }
-        $this->where[] = array($where, $parameter);
+        else
+            $this->where[] = array($where, $parameter);
+
         return $this;
     }
 
