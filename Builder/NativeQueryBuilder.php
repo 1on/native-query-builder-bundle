@@ -9,6 +9,8 @@ class NativeQueryBuilder
 {
     const CACHE_TIME = 600;
 
+    protected $em;
+
     private $select = array();
     private $from = '';
     private $join = array();
@@ -18,8 +20,6 @@ class NativeQueryBuilder
     private $page = null;
     private $rest = '';
     private $queryParametes = array();
-
-    protected $em;
 
     public function __construct(EntityManager $em)
     {
@@ -32,7 +32,7 @@ class NativeQueryBuilder
      * @param integer $cacheTime время кеширования запроса
      * @return NativeQuery
      */
-    public function getQuery(ResultSetMapping $rsm, $resetParameters = true, $cacheTime = self::CACHE_TIME)
+    public function getQuery(ResultSetMapping $rsm, $cacheTime = self::CACHE_TIME, $resetParameters = true)
     {
         $query = $this->em->createNativeQuery('', $rsm);
 
