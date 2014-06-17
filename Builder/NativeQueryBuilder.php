@@ -138,7 +138,7 @@ class NativeQueryBuilder
     }
 
 
-    public function addSelect($select)
+    public function select($select)
     {
         $this->select[] = $select;
         return $this;
@@ -150,19 +150,21 @@ class NativeQueryBuilder
         return $this;
     }
 
-    public function setFrom($from)
+    public function from($from)
     {
         $this->from = $from;
         return $this;
     }
 
-    public function addJoin($table, $joinOn)
+    public function join($table, $joinOn)
     {
+        if (mb_strpos($table, 'JOIN') === false)
+            $table = 'JOIN ' . $table;
         $this->join[$table] = $joinOn;
         return $this;
     }
 
-    public function addWhere($where, $parameter = null, $isOr = false)
+    public function where($where, $parameter = null, $isOr = false)
     {
         if ($isOr)
         {
@@ -176,25 +178,25 @@ class NativeQueryBuilder
         return $this;
     }
 
-    public function addOrderBy($field, $direction = 'DESC')
+    public function orderBy($field, $direction = 'DESC')
     {
         $this->orderBy[$field] = $direction;
         return $this;
     }
 
-    public function setRest($rest)
+    public function rest($rest)
     {
         $this->rest = $rest;
         return $this;
     }
 
-    public function setLimit($limit)
+    public function limit($limit)
     {
         $this->limit = $limit;
         return $this;
     }
 
-    public function setPage($page)
+    public function page($page)
     {
         $this->page = $page;
         return $this;
