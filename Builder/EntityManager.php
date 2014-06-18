@@ -9,6 +9,8 @@ use Doctrine\Common\EventManager;
 
 class EntityManager extends DoctrineEntityManager
 {
+    protected $cacheTime = 0;
+
     /**
      * Create a NativeQueryBuilder instance
      *
@@ -16,7 +18,7 @@ class EntityManager extends DoctrineEntityManager
      */
     public function createNativeQueryBuilder()
     {
-        return new NativeQueryBuilder($this);
+        return new NativeQueryBuilder($this, $this->cacheTime);
     }
 
     /**
@@ -46,5 +48,18 @@ class EntityManager extends DoctrineEntityManager
         }
 
         return new EntityManager($conn, $config, $conn->getEventManager());
+    }
+
+
+    public function setCacheTime($cacheTime)
+    {
+        $this->cacheTime = $cacheTime;
+
+        return $this;
+    }
+
+    public function getCacheTime()
+    {
+        return $this->cacheTime;
     }
 }

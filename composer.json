@@ -1,7 +1,7 @@
 {
     "name": "intaro/native-query-builder-bundle",
     "description": "Native query builder for doctrine",
-    "keywords": ["symfony2", "doctrine", "native query builder"],
+    "keywords": ["symfony2", "doctrine", "sql", "native", "builder"],
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [{
@@ -20,7 +20,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.3.1-dev"
+            "dev-master": "0.4.0-dev"
         }
     },
     "target-dir" : "Intaro/NativeQueryBuilderBundle"

@@ -10,7 +10,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 
-class IntaroNativeQueryBuilderExtension extends Extension
+class IntaroNativeQueryBuilderExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritDoc}
@@ -22,5 +22,20 @@ class IntaroNativeQueryBuilderExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+
+        $container->get('doctrine')->getManager()->setCacheTime($config['cache_time']);
+    }
+
+    public function prepend(ContainerBuilder $container)
+    {
+        $config = array(
+            'entity_managers' => array(
+                'default' => array(
+                    'default_repository_class' => 'Intaro\NativeQueryBuilderBundle\Builder\EntityRepository',
+                )
+            )
+        );
+
+        $container->prependExtensionConfig('doctrine.orm', $config);
     }
 }

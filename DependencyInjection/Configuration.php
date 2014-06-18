@@ -13,9 +13,12 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('intaro_native_query_builder');
+        $tree = new TreeBuilder();
+        $tree->root('intaro_native_query_builder')
+            ->children()
+                ->scalarNode('cache_time')->defaultValue(0)->end()
+            ->end();
 
-        return $treeBuilder;
+        return $tree;
     }
 }

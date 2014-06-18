@@ -7,9 +7,8 @@ use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 class NativeQueryBuilder
 {
-    const CACHE_TIME = 600;
-
     protected $em;
+    protected $cacheTime;
 
     private $select = array();
     private $from = '';
@@ -21,9 +20,10 @@ class NativeQueryBuilder
     private $rest = '';
     private $queryParametes = array();
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, $cacheTime)
     {
         $this->em = $em;
+        $this->cacheTime = $cacheTime;
     }
 
     /**
@@ -32,8 +32,11 @@ class NativeQueryBuilder
      * @param integer $cacheTime время кеширования запроса
      * @return NativeQuery
      */
-    public function getQuery(ResultSetMapping $rsm, $cacheTime = self::CACHE_TIME, $resetParameters = true)
+    public function getQuery(ResultSetMapping $rsm, $cacheTime = null, $resetParameters = true)
     {
+        if (is_null($cacheTime))
+            $cacheTime = $this->cacheTime;
+
         $query = $this->em->createNativeQuery('', $rsm);
 
         $sql = 'SELECT ';
