@@ -3,12 +3,11 @@
 namespace Intaro\NativeQueryBuilderBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
+use Intaro\NativeQueryBuilderBundle\Builder\EntityManager;
 
 class IntaroNativeQueryBuilderExtension extends Extension implements PrependExtensionInterface
 {
@@ -23,15 +22,17 @@ class IntaroNativeQueryBuilderExtension extends Extension implements PrependExte
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $container->get('doctrine')->getManager()->setCacheTime($config['cache_time']);
+        EntityManager::setCacheTime($config['cache_time']);
     }
 
     public function prepend(ContainerBuilder $container)
     {
         $config = array(
-            'entity_managers' => array(
-                'default' => array(
-                    'default_repository_class' => 'Intaro\NativeQueryBuilderBundle\Builder\EntityRepository',
+            'orm' => array(
+                'entity_managers' => array(
+                    'default' => array(
+                        'default_repository_class' => 'Intaro\NativeQueryBuilderBundle\Builder\EntityRepository',
+                    )
                 )
             )
         );
