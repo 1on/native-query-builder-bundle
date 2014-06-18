@@ -130,7 +130,7 @@ Complex example with getting entities count:
 
         $rsm = new ResultSetMappingBuilder($this->getDoctrine()->getManager());
         $rsm->addRootEntityFromClassMetadata('AsozdGdDataBundle:Planning\document', 'document');
-        $items = $builder->clearSelect()->select('document.*)
+        $items = $builder->clearSelect()->select('document.*')
             ->orderBy('document.start_date', 'DESC')
             ->limit(20)->page(1)->getQuery($rsm, 3600)->getResult();
 ```
